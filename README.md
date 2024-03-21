@@ -9,27 +9,18 @@ If you plan to generate new samples by ChatGPT, set your environment variable `O
 Software structure
 ==================
 
-|- `workflow.py`: main file to run. Setup which module you want to run...
+    |- workflow.py  -- main file to run. Setup which module you want to run...
+    |- chatgpt.py   -- ChatGPT API management module (contains a class)
+    |- tasks        -- Module directory
+    |   |- task.py                    -- Base Task class
+    |   |- counterfactual.py          -- Counterfactual task class
+    |   |- counterfactual_semantic.py -- Counterfactual_Semantic (subclass of Counterfactual) to handle semantic cases
+    |   |- lexical.py                 -- Lexical task class
+    |   |- semantic.py                -- Semantic task class
+    |   |- syntactic.py               -- Syntactic task class
+    |   |- terms.py                   -- Term task class
+    |   |- testing.py                 -- Testing task class
 
-|- `chatgpt.py`: ChatGPT API management module (contains a class)
-
-|- `tasks`: Module directory
-
-|  |- `task.py`: Base Task class
-
-|  |- `counterfactual.py`: Counterfactual task class
-
-|  |- `counterfactual_semantic.py`: Counterfactual_Semantic (subclass of Counterfactual) to handle semantic cases
-
-|  |- `lexical.py`: Lexical task class
-
-|  |- `semantic.py`: Semantic task class
-
-|  |- `syntactic.py`: Syntactic task class
-
-|  |- `terms.py`: Term task class
-
-|  |- `testing.py`: Testing task class
 
 Database
 ========
