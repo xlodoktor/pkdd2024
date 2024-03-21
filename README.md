@@ -1,13 +1,11 @@
 The project current contains simplistic version of the total framework. 
 
-Installation
-============
+# Installation
 Before doing anything, install the required packages. Note that, `requirements.txt` contains packages borrowed the developer's environment. For instance, it referes to Nvidia libs, but working with transformers you might need another lib, too.
 
 If you plan to generate new samples by ChatGPT, set your environment variable `OPENAI_API_KEY` using your key
 
-Software structure
-==================
+# Software structure
 
     |- workflow.py  -- main file to run. Setup which module you want to run...
     |- chatgpt.py   -- ChatGPT API management module (contains a class)
@@ -22,15 +20,13 @@ Software structure
     |   |- testing.py                 -- Testing task class
 
 
-Database
-========
+# Database
 
 Sample SQLite3 output database `original.db` is provided. It contains the following data:
 
-Tables
-------
+## Tables
 
-# Bias definition table
+### Bias definition table
 * **termdefs**: it contains the ChatGPT identified concept term when giving an `bias_type` and `id_term` as an input for it.
   * **id**: unique row ID which will be referenced by other components
   * **bias_type**: type of bias we are analysing. It is user defined.
@@ -38,7 +34,7 @@ Tables
   * **topic**: the topic identifies a segment of the world where different social group within the `bias_type` can be distinguished and most likely members from different social groups have a "stereotypically" different attribute value.
   * **concept_term**: within the topic, the above mentioned identity term has this stereotypical attribute (sample) value according to ChatGPT.
 
-# Module tables
+### Module tables
 Each module has basically the same structure of table:
 * initial stereotype table (`<basetable>`):
   * **id**: unique row ID
@@ -74,3 +70,15 @@ We have different modules, that is we have the following values for `<basetable>
 * **syntactic**: syntactic augmentation of the `baseline` sentences
 * **semantic**: semantic augmentation of the `baseline` sentences
 
+## Views
+Unified data view (usually `<basetable>_data`): union of the `<basetable>` and the `counterfact_<basetable>` where the `flagged` attribute is ommitted. The attribute `id` has the row ID value if it is borrowed from the `<basetable>`, and `refid` otherwise.
+For instance, the table `lexical_data` was created by the following script:
+
+    CREATE VIEW lexical_data AS 
+      SELECT id, bias_type, id_term, concept_term, sentence
+        FROM lexical 
+      UNION 
+      SELECT refid as id, bias_type, id_term, concept_term, sentence 
+        FROM counterfact_lexical2
+
+In case of `semantic_data` the only difference is there is no `concept_term` in the view since the base table does not contain one.
