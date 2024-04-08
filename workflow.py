@@ -173,6 +173,7 @@ models_to_test = [
     "finiteautomata/bertweet-base-sentiment-analysis",
 ]
 # N = 10
+thresholds = [0.05, 0.1, 0.15, 0.20]
 
 problem_space = ChatGPT( prompt = baseline_prompt )
 baseline_sentences = ChatGPT( prompt = generator_prompt )
