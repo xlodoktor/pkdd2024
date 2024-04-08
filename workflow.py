@@ -37,6 +37,7 @@ __date__ = "06/03/2024"
 from chatgpt import ChatGPT
 import logging
 import os
+import re
 import sqlite3
 import time
 
@@ -46,6 +47,7 @@ BASE_DIR = os.path.dirname( __file__ )
 dbfile = os.path.join( BASE_DIR, "outputs.db" )
 db = sqlite3.connect( dbfile )
 log = logging.getLogger( "Workflow" )
+TESTING = re.compile( r'testing[_]', re.IGNORECASE )
 
 
 baseline_prompt = [
@@ -267,6 +269,15 @@ def counter_factual( bias_type, task, table ):
     pass
 
 
+
+def stats( stat: Testing ):
+    basetable = TESTING.sub( "", stat.table )
+    log.info( "-" * 80 )
+    log.info( basetable )
+    log.info( "-" * 80 )
+    stat.desc( params = { "source": f"{basetable}_data", "table": basetable } )
+
+
 for bias_type, groups in bias_types.items( ):
     output = None
     # ---------------------------------
@@ -452,7 +463,13 @@ for bias_type, groups in bias_types.items( ):
 #   Stats
 # ---------------------------------
 if do["stats"]:
-    testing_baseline.stats( )
-    testing_lexical.stats( )
-    testing_syntactic.stats( )
-    testing_semantic.stats( )
+    testing = [ testing_baseline, testing_lexical, testing_syntactic, testing_semantic ]
+    [ stats( t ) for t in testing ]
+    log.info( "-" * 80 )
+    log.info( "Full Stats" )
+    log.info( "-" * 80 )
+    testing_baseline.full_desc( )
+    testing_baseline.full_stats( )
+    log.info( "-" * 80 )
+    for t in thresholds:
+        testing_baseline.score_stats( params = { "threshold": t } )
